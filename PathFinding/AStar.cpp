@@ -76,7 +76,7 @@ std::vector<Tile*> AStar::FindPath(Tile* start, Tile* goal)
             std::vector<Tile*> path = RetracePath(currentAtile); 
             for (Tile* tile : path) 
             { 
-                tile->; // Path tiles are green 
+                tile->SetType(TileType::PATH); // Path tiles are green 
             }
             return path;
         }
