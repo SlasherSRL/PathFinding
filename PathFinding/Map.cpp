@@ -105,9 +105,13 @@ void Map::DrawLines()
 {
 	for (std::shared_ptr<Tile> tile : tiles)
 	{
-		for (std::shared_ptr<Tile> neighbor : tile.get()->neighbors)
+		for (std::weak_ptr<Tile> wekneighbor : tile->neighbors)
 		{
-			Play::DrawLine({ tile->GetPosition().x + offsetX,tile->GetPosition().y + offsetY }, { neighbor->GetPosition().x+offsetX,neighbor->GetPosition().y + offsetY}, Play::cOrange);
+			if(auto neighbor= wekNeighbor.lock())
+			{
+				Play::DrawLine({ tile->GetPosition().x + offsetX,tile->GetPosition().y + offsetY }, { neighbor->GetPosition().x+offsetX,neighbor->GetPosition().y + offsetY}, Play::cOrange);
+			}
+			
 		}
 	}
 }
