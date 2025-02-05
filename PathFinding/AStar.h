@@ -7,20 +7,19 @@ class AStar
 {
 private:
 	Map& map;
-	float GetDistance(Tile* current, Tile* goal); 
+	float GetDistance(std::shared_ptr<Tile> current, std::shared_ptr<Tile> destination);
 	
 
-	std::priority_queue<Atile*> openList; 
-	std::vector<Tile*> closedList; 
-	std::unordered_map<Tile*, Atile*> openListMap; 
-	Atile* currentAtile;
+	std::map<std::shared_ptr<Tile>,std::shared_ptr<Atile>> closedListMap;
+	std::map<std::shared_ptr<Tile>, std::shared_ptr<Atile>> openListMap;
+	std::shared_ptr<Atile> currentAtile; 
 	
 public:
 
 	AStar(Map& thismap);
 	~AStar();
-	std::vector<Tile*> FindPath(Tile* start, Tile* goal);
+	std::vector<std::shared_ptr<Tile>> FindPath(std::shared_ptr<Tile> start, std::shared_ptr<Tile> goal);
 	bool finished = false;
-	std::vector<Tile*> RetracePath(Atile* end);
+	std::vector<std::shared_ptr<Tile>> RetracePath(std::shared_ptr<Atile> end);
 };
 

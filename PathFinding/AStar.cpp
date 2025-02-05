@@ -6,10 +6,8 @@ AStar::AStar(Map& thismap): map(thismap)
 }
 AStar::~AStar()
 {
-    for (auto& pair : openListMap)
-    {
-        delete pair.second;
-    }
+   
+    
 }
 //float AStar::CalculateHCost(Tile* current, Tile* goal)
 //{
@@ -19,9 +17,9 @@ AStar::~AStar()
 //   
 //    return std::sqrt(dx * dx + dy * dy);
 //}
-float AStar::GetDistance(Tile* current, Tile* destination) {
-    int dstX = std::abs(current->GetPosition().x - destination->GetPosition().x);
-    int dstY = std::abs(current->GetPosition().y - destination->GetPosition().y);
+float AStar::GetDistance(std::shared_ptr<Tile> current, std::shared_ptr<Tile> destination) {
+    int dstX = std::abs(current.get()->GetPosition().x - destination.get()->GetPosition().x);
+    int dstY = std::abs(current.get()->GetPosition().y - destination.get()->GetPosition().y);
 
     if (dstX > dstY)
     {
@@ -43,83 +41,33 @@ float AStar::GetDistance(Tile* current, Tile* destination) {
 //    }
 //}
 
-std::vector<Tile*> AStar::FindPath(Tile* start, Tile* goal)
+std::vector<std::shared_ptr<Tile>> AStar::FindPath(std::shared_ptr<Tile> start, std::shared_ptr<Tile> goal)
 {
     if (finished)
     {
-        return std::vector<Tile*>();
-    }
-    if (currentAtile == nullptr) // currentTile is nullptr, set currentTile to startTile
-    {
-        currentAtile = new Atile();
-        currentAtile->tile = start;
-        currentAtile->parent = nullptr;
-        currentAtile->gCost = 0;
-        currentAtile->hCost = GetDistance(start,goal);
-         
-        openList.push(currentAtile);
-        currentAtile->tile->color = Play::cYellow; 
-        openListMap[start] = currentAtile; 
-
-    }
-    
-
-    if(!openList.empty())
-    {
-        Atile* currentAtile = openList.top(); 
-        openList.pop(); 
-
-        Tile* currentTile = currentAtile->tile; 
-        if (currentTile == goal) 
-        {
-            finished = true;
-            std::vector<Tile*> path = RetracePath(currentAtile); 
-            for (Tile* tile : path) 
-            { 
-                tile->SetType(TileType::PATH); // Path tiles are green 
-            }
-            return path;
-        }
-        closedList.push_back(currentTile); 
-        currentTile->color = Play::cRed;
-        for (Tile* neighbor : currentTile->neighbors) 
-        {
-            if (std::find(closedList.begin(), closedList.end(), neighbor) != closedList.end()) // if neighbor is in closed list
-            {
-                continue;
-            }
-            float calcedGCost = currentAtile->gCost + GetDistance(currentTile, neighbor);
-            Atile* openAtile = openListMap[neighbor];
-
-            if (openAtile == nullptr) // if Atile doesnt exist for this neighbor
-            {
-                Atile* newAtile = new Atile();
-                newAtile->tile = neighbor;
-                newAtile->gCost = calcedGCost;
-                newAtile->hCost = GetDistance(neighbor, goal);
-                newAtile->parent = currentAtile;
-                neighbor->color = Play::cYellow;
-                openList.push(newAtile);
-
-                openListMap[neighbor] = newAtile;
-            }
-            else if( calcedGCost<openAtile->gCost)
-            {
-                openAtile->gCost = calcedGCost;
-                openAtile->parent = currentAtile;
-            }
-           
-        }
-        return std::vector<Tile*>();
+        return  std::vector<std::shared_ptr<Tile>>();
     }
    
-    return std::vector<Tile*>();
+    if (openListMap.empty())
+    {
+        //add start to here
+    }
+
+    if (!openListMap.empty())
+    {
+        std::shared_ptr<Atile> currentAtile = openListMap[0];
+
+
+
+    }
+   
+    return std::vector<std::shared_ptr<Tile>>(); 
 }
 
-std::vector<Tile*> AStar::RetracePath(Atile* end)
+std::vector<std::shared_ptr<Tile>> AStar::RetracePath(std::shared_ptr<Atile> end)
 {
-    std::vector<Tile*> path;
-    Atile* current = end;
+    std::vector<std::shared_ptr<Tile>> path;
+    std::shared_ptr<Atile> current = end;
     while (current != nullptr)
     {
         path.push_back(current->tile);

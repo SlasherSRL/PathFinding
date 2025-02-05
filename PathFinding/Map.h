@@ -3,11 +3,12 @@
 #include "Tile.h"
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include "Directions.h"
 class Map
 {
 private:
-	std::vector<Tile> tiles;
+	std::vector<std::shared_ptr<Tile>> tiles;
 	
 	int width, height;
 	const int tilesize = 10;
@@ -22,10 +23,10 @@ public:
 	void DrawLines();
 
 	void SetOffset(int offsetXs, int offsetYs);
-	Tile* GetTile(int x, int y);
+	std::shared_ptr<Tile> GetTile(int x, int y);
 
-	Tile* startTile; 
-	Tile* goalTile; 
+	std::shared_ptr<Tile> startTile;
+	std::shared_ptr<Tile> goalTile;
 	
 
 
