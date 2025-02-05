@@ -93,12 +93,12 @@ void Map::Render(bool finished)
 	}
 
 }
-void Map::RenderOneTile(Tile* tile)
+void Map::RenderOneTile(std::shared_ptr<Tile> tile)
 {
 	Play::DrawRect(
-		{ tile->GetPosition().x - tilesize / 2 + offsetX, tile->GetPosition().y - tilesize / 2 + offsetY },
-		{ tile->GetPosition().x + tilesize / 2 + offsetX, tile->GetPosition().y + tilesize / 2 + offsetY },
-		tile->color, true);
+		{ tile.get()->GetPosition().x - tilesize / 2 + offsetX, tile.get()->GetPosition().y - tilesize / 2 + offsetY },
+		{ tile.get()->GetPosition().x + tilesize / 2 + offsetX, tile.get()->GetPosition().y + tilesize / 2 + offsetY },
+		tile.get()->color, true);
 }
 
 void Map::DrawLines()
