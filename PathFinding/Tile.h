@@ -23,7 +23,7 @@ public:
 	Play::Colour color = Play::cBlack; 
 
 	
-	std::vector<std::shared_ptr<Tile>> neighbors;
+	std::vector<std::weak_ptr<Tile>> neighbors;
 
 };
 
