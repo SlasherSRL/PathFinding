@@ -5,7 +5,8 @@ enum TileType
 	WALL,
 	START,
 	WALKABLE,
-	GOAL
+	GOAL,
+	PATH
 };
 class Tile
 {
@@ -14,11 +15,12 @@ private:
 	Play::Point2D position;
 public:
 
-	Tile(TileType tType, int x, int y);
+	Tile(TileType tType, int x, int y,Play::Colour col);
 	Play::Point2D GetPosition();
 	TileType GetType();
-	//A* stuff
-	Play::Colour color= Play::cBlack;
+	void SetType(TileType tip);
+
+	Play::Colour color = Play::cBlack; 
 
 	
 	std::vector<Tile*> neighbors;
@@ -28,11 +30,16 @@ public:
 struct Atile
 {
 	Tile* tile;
-	Tile* parent;
+	Atile* parent;
 	float gCost;
 	float hCost;
 	float fCost()const
 	{
 		return gCost + hCost;
 	}
+	bool operator<(const Atile& other)const
+	{
+		return fCost() < other.fCost();
+	}
 };
+

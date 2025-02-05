@@ -2,11 +2,21 @@
 
 Map::Map(const char* filePath)
 {
+	startTile = nullptr;
+	goalTile = nullptr;
 	LoadFromFile(filePath);
+	
 	SetupNeighbors();
 }
 Map::~Map()
 {
+
+}
+void Map::SetOffset(int offsetXs, int offsetYs)
+{
+	offsetX = offsetXs;
+	offsetY = offsetYs;
+
 
 }
 void Map::LoadFromFile(const char* filePath)
@@ -29,6 +39,7 @@ void Map::LoadFromFile(const char* filePath)
 	tiles.clear();//make sure tiles is empty
 	width = mapData[0].size();
 	height = mapData.size();
+	tiles.reserve(width * height);
 	stride = width;
 	for (int row = 0; row < height; row++)
 	{
@@ -37,36 +48,41 @@ void Map::LoadFromFile(const char* filePath)
 			TileType type;
 			switch (mapData[row][col])
 			{
-			case 'X': type = WALL; break;
-			case 'S': type = START; break;
-			case 'G': type = GOAL; break;
-			case '0': type = WALKABLE; break;
+			case 'X': type = WALL; 
+
+				tiles.emplace_back(type, col * tilesize, (height - 1 - row) * tilesize,Play::cBlack); // make sure to flip Y
+				break;
+			case 'S': type = START; 
+				startTile = &tiles.emplace_back(type, col * tilesize, (height - 1 - row) * tilesize, Play::cWhite); // make sure to flip Y 
+				break;
+			case 'G': type = GOAL; 
+				goalTile = &tiles.emplace_back(type, col * tilesize, (height - 1 - row) * tilesize, Play::cGreen); // make sure to flip Y
+				break;
+			case '0': type = WALKABLE; 
+				tiles.emplace_back(type, col * tilesize, (height - 1 - row) * tilesize, Play::cBlue); // make sure to flip Y
+				break;
 			}
-			tiles.emplace_back(type, col * tilesize, (height-1-row) *tilesize); // make sure to flip Y
+			
 		}
 	}
 }
 
-void Map::Render(int offsetX, int offsetY)
+void Map::Render(bool finished)
 {
 	for (Tile tile : tiles)
 	{
-		
-
-		switch (tile.GetType())
+		if (finished)
 		{
-		case WALL:
-			tile.color = Play::cBlack;
-			break;
-		case WALKABLE:
-			tile.color = Play::cBlue;
-			break;
-		case GOAL:
-			tile.color = Play::cGreen;
-			break;
-		case START:
-			tile.color = Play::cWhite;
-			break;
+			
+			switch (tile.GetType())
+			{
+
+			case WALL:      tile.color = Play::cBlack; break;
+			case START:     tile.color = Play::cWhite; break;
+			case WALKABLE:  tile.color = Play::cBlue;  break;
+			case GOAL:      tile.color = Play::cGreen;   break;
+			case PATH: tile.color = Play::cGreen; break;
+			}
 		}
 		Play::DrawRect(
 			{ tile.GetPosition().x -tilesize / 2+offsetX, tile.GetPosition().y - tilesize / 2+offsetY},  
@@ -76,8 +92,15 @@ void Map::Render(int offsetX, int offsetY)
 	}
 
 }
+void Map::RenderOneTile(Tile* tile)
+{
+	Play::DrawRect(
+		{ tile->GetPosition().x - tilesize / 2 + offsetX, tile->GetPosition().y - tilesize / 2 + offsetY },
+		{ tile->GetPosition().x + tilesize / 2 + offsetX, tile->GetPosition().y + tilesize / 2 + offsetY },
+		tile->color, true);
+}
 
-void Map::DrawLines(int offsetX,int offsetY)
+void Map::DrawLines()
 {
 	for (Tile tile : tiles)
 	{
@@ -87,7 +110,7 @@ void Map::DrawLines(int offsetX,int offsetY)
 		}
 	}
 }
-
+//get tile based on position in vector
 Tile* Map::GetTile(int x, int y)
 {
 	if (x < 0 || x >= width || y < 0 || y >= height)
