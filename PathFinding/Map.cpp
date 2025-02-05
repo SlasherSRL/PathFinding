@@ -144,7 +144,7 @@ void Map::SetupNeighbors()
 			}
 				
 
-			std::vector<std::shared_ptr<Tile>> neighbors;
+			std::vector<std::weak_ptr<Tile>> neighbors;
 			
 
 			for (const Direction& direc: directions)
