@@ -18,8 +18,12 @@ float AStar::GetDistance(Tile* current, Tile* destination) {
     int dstX = std::abs(current->GetPosition().x - destination->GetPosition().x);
     int dstY = std::abs(current->GetPosition().y - destination->GetPosition().y);
 
-    // Standard A* heuristic with diagonal movement considered
-    return 10 * (dstX + dstY) + (14 - 2 * 10) * std::min(dstX, dstY);
+    if (dstY < dstX)
+    {
+        return 14 * dstY + 10 * (dstX - dstY);
+    }
+    return 14 * dstX + 10 * (dstY - dstX);
+    //return 10 * (dstX + dstY) + (14 - 2 * 10) * std::min(dstX, dstY);
 }
 
 
@@ -83,25 +87,60 @@ std::vector<Tile*> AStar::FindPath(Tile* start, Tile*goal)
              }
              int newGCost = currentAtile->gCost + GetDistance(currentAtile->tile, neighbor);
              Atile* neighborTile = FindInOpenList(neighbor);
-             if (!neighborTile || newGCost < neighborTile->gCost)
+             if (!neighborTile)
              {
-                 if (!neighborTile)
-                 {
-                     neighborTile = new Atile();
-                     neighborTile->tile = neighbor;
-                     openListMap[neighbor] = neighborTile;
-                 }
+                 neighborTile = new Atile();
+                 neighborTile->tile = neighbor;
+                 openListMap[neighbor] = neighborTile;
+                 // Assign gCost and hCost for new tiles
                  neighborTile->gCost = newGCost;
                  neighborTile->hCost = GetDistance(neighbor, goal);
                  neighborTile->parent = currentAtile;
                  neighbor->color = Play::cYellow;
              }
+             // If it's already in the open list, check if the path is better
+             else if (newGCost < neighborTile->gCost)
+             {
+                 neighborTile->gCost = newGCost;
+                 neighborTile->hCost = GetDistance(neighbor, goal);
+                 neighborTile->parent = currentAtile;
+                 neighbor->color = Play::cYellow;
+             }
+             //bool betterPath= false;
+             //if (!neighborTile || newGCost < neighborTile->gCost)
+             //{
+             //    betterPath = true;
+             //}
+             //if (betterPath)
+             //{
+             //    if (!neighborTile)
+             //    {
+             //        neighborTile = new Atile();
+             //        neighborTile->tile = neighbor;
+             //        openListMap[neighbor] = neighborTile;
+             //    }
+             //    neighborTile->gCost = newGCost;
+             //    neighborTile->hCost = GetDistance(neighbor, goal);
+             //    neighborTile->parent = currentAtile;
+             //    neighbor->color = Play::cYellow;
+             //}
+                
+             
          }
        
 
     }
    
     return std::vector<Tile*>(); 
+}
+std::vector<Tile*> AStar::FindWholePath(Tile* start, Tile* goal)
+{
+    std::vector<Tile*> path;
+    while (!finished)
+    {
+        path=FindPath(start, goal);
+    }
+    return path;
 }
 Atile* AStar::FindInOpenList(Tile* tile)
 {

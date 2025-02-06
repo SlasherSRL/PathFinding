@@ -38,9 +38,6 @@ struct Atile
 	{
 		return gCost + hCost;
 	}
-	bool operator<(const Atile& other)const
-	{
-		return fCost() < other.fCost();
-	}
+	
 };
 

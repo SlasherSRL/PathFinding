@@ -19,6 +19,7 @@ public:
 	AStar(Map& thismap);
 	~AStar();
 	std::vector<Tile*> FindPath(Tile* start, Tile* goal);
+	std::vector<Tile*> FindWholePath(Tile* start, Tile* goal);
 	bool finished = false;
 	std::vector<Tile*> RetracePath(Atile* end);
 	Atile* FindInOpenList(Tile* tile);
