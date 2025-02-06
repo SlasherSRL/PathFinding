@@ -1,7 +1,6 @@
 #pragma once
 #include "Map.h"
 #include <vector>
-#include <queue>
 #include <map>
 class AStar
 {
