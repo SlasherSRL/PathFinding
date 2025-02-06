@@ -41,3 +41,8 @@ struct Atile
 	
 };
 
+struct DTile
+{
+	Tile* tile;
+	DTile* parent;
+};

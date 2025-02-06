@@ -4,6 +4,7 @@
 #include "Map.h"
 #include "AStar.h"
 #include "Timer.h"
+#include "DepthSearch.h"
 int DISPLAY_WIDTH = 720;
 int DISPLAY_HEIGHT = 380;
 int DISPLAY_SCALE = 3;
@@ -19,11 +20,14 @@ AStar astarMap2(map2);
 
 AStar astarMap3(map3);
 
+DepthSearch dptMap1(map1);
+
 Timer map1Time;
 
 Timer map2Time;
 
 Timer map3Time;
+
 
 // The entry point for a PlayBuffer program
 void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
@@ -47,8 +51,9 @@ bool MainGameUpdate( float elapsedTime )
 	if (!astarMap1.finished)
 	{
 		map1.Render(false);
+		path1 = dptMap1.FindPath(map1.startTile, map1.goalTile);
 		// path1= astarMap1.FindPath(map1.startTile, map1.goalTile);
-		path1 = astarMap1.FindWholePath(map1.startTile, map1.goalTile);
+		//path1 = astarMap1.FindWholePath(map1.startTile, map1.goalTile);
 		  
 	}
 	if (astarMap1.finished)
@@ -64,7 +69,7 @@ bool MainGameUpdate( float elapsedTime )
 		
 		Play::DrawDebugText({ 100,250 }, std::to_string(map1Time.time).c_str(), Play::cBlack);
 	}
-	map1.DrawLines();
+	//map1.DrawLines();
 	
 	std::vector<Tile*> path2;
 	if (!map2Time.timerStarted)
@@ -75,7 +80,7 @@ bool MainGameUpdate( float elapsedTime )
 	{
 		map2.Render(false);
 		//path2 = astarMap2.FindPath(map2.startTile, map2.goalTile);
-		path2 = astarMap2.FindWholePath(map2.startTile, map2.goalTile);
+		//path2 = astarMap2.FindWholePath(map2.startTile, map2.goalTile);
 	}
 	if (astarMap2.finished)
 	{
@@ -99,7 +104,7 @@ bool MainGameUpdate( float elapsedTime )
 	{
 		 map3.Render(false);
 		 //path3 = astarMap3.FindPath(map3.startTile, map3.goalTile);
-		 path3 = astarMap3.FindWholePath(map3.startTile, map3.goalTile);
+		 //path3 = astarMap3.FindWholePath(map3.startTile, map3.goalTile);
 	}
 	if (astarMap3.finished)
 	{
