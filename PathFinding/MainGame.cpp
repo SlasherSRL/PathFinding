@@ -35,7 +35,7 @@ bool MainGameUpdate( float elapsedTime )
 	std::vector<Tile*> path1;
 	if (!astarMap1.finished)
 	{
-		// path1= astarMap1.FindPath(map1.startTile.get(), map1.goalTile.get());
+		 path1= astarMap1.FindPath(map1.startTile, map1.goalTile);
 		 map1.Render(false); 
 	}
 	if (astarMap1.finished)
@@ -43,26 +43,26 @@ bool MainGameUpdate( float elapsedTime )
 		map1.Render(true);
 		
 	}
-	map1.DrawLines();
+	//map1.DrawLines();
 	map2.Render(false);
-	//if (!astarMap2.finished)
-	//{
-	//	std::vector<Tile*> path = astarMap2.FindPath(map2.startTile, map2.goalTile);
-	//}
-	//if (astarMap2.finished)
-	//{
-	//
-	//}
+	if (!astarMap2.finished)
+	{
+		std::vector<Tile*> path = astarMap2.FindPath(map2.startTile, map2.goalTile);
+	}
+	if (astarMap2.finished)
+	{
+		map2.Render(true);
+	}
 	//map2.DrawLines();
 	map3.Render(false);
-	// if (!astarMap3.finished)
-	//{
-	//	std::vector<Tile*> path = astarMap3.FindPath(map3.startTile, map3.goalTile);
-	//}
-	//if (astarMap3.finished)
-	//{
-	//
-	//}
+	 if (!astarMap3.finished)
+	{
+		std::vector<Tile*> path = astarMap3.FindPath(map3.startTile, map3.goalTile);
+	}
+	if (astarMap3.finished)
+	{
+		map3.Render(true);
+	}
 	//map3.DrawLines();
 	Play::PresentDrawingBuffer();
 	return Play::KeyDown( KEY_ESCAPE );

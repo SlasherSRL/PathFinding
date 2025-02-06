@@ -8,10 +8,15 @@ Map::Map(const char* filePath)
 	
 	SetupNeighbors();
 }
-Map::~Map()
+Map::~Map() 
 {
-
+	for (Tile* tile : tiles) 
+	{
+		delete tile;  // Free each allocated tile
+	}
+	tiles.clear(); // Clear the vector to avoid dangling pointers 
 }
+
 void Map::SetOffset(int offsetXs, int offsetYs)
 {
 	offsetX = offsetXs;
@@ -46,21 +51,29 @@ void Map::LoadFromFile(const char* filePath)
 		for (int col = 0; col < width; col++)
 		{
 			TileType type;
+			Tile* tile = nullptr;
 			switch (mapData[row][col])
 			{
 			case 'X': type = WALL; 
 
-
-				tiles.emplace_back(new Tile(type, col * tilesize, (height - 1 - row) * tilesize,Play::cBlack)); // make sure to flip Y
+				 tile = new Tile(type, col * tilesize, (height - 1 - row) * tilesize, Play::cBlack);
+				
+				tiles.push_back(tile); // make sure to flip Y
 				break;
 			case 'S': type = START; 
-				startTile = tiles.emplace_back(new Tile(type, col * tilesize, (height - 1 - row) * tilesize, Play::cWhite)); // make sure to flip Y 
+				 tile = new Tile(type, col * tilesize, (height - 1 - row) * tilesize, Play::cWhite);
+				tiles.push_back(tile); 
+				startTile = tile;// make sure to flip Y 
 				break;
 			case 'G': type = GOAL; 
-				goalTile = tiles.emplace_back(new Tile(type, col * tilesize, (height - 1 - row) * tilesize, Play::cGreen)); // make sure to flip Y
+				tile = new Tile(type, col * tilesize, (height - 1 - row) * tilesize, Play::cGreen); 
+				tiles.push_back(tile); 
+				goalTile = tile; // make sure to flip Y
 				break;
 			case '0': type = WALKABLE; 
-				tiles.emplace_back(new Tile(type, col * tilesize, (height - 1 - row) * tilesize, Play::cBlue)); // make sure to flip Y
+				tile = new Tile(type, col * tilesize, (height - 1 - row) * tilesize, Play::cBlue);
+				tiles.push_back(tile);
+				 // make sure to flip Y
 				break;
 			}
 			
