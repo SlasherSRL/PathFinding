@@ -43,7 +43,7 @@ bool MainGameUpdate( float elapsedTime )
 		map1.Render(true);
 		
 	}
-	//map1.DrawLines();
+	map1.DrawLines();
 	map2.Render(false);
 	//if (!astarMap2.finished)
 	//{

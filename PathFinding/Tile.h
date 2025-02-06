@@ -23,14 +23,15 @@ public:
 	Play::Colour color = Play::cBlack; 
 
 	
-	std::vector<std::weak_ptr<Tile>> neighbors;
+	std::vector<Tile*> neighbors;
+
 
 };
 
 struct Atile
 {
-	std::shared_ptr<Tile> tile;
-	std::shared_ptr<Atile> parent;
+	Tile* tile;
+	Atile* parent;
 	float gCost;
 	float hCost;
 	float fCost()const

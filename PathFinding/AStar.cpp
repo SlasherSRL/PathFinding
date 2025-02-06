@@ -9,17 +9,10 @@ AStar::~AStar()
    
     
 }
-//float AStar::CalculateHCost(Tile* current, Tile* goal)
-//{
-//    int dx = std::abs(current->GetPosition().x - goal->GetPosition().x);
-//    int dy = std::abs(current->GetPosition().y - goal->GetPosition().y);
-//
-//   
-//    return std::sqrt(dx * dx + dy * dy);
-//}
-float AStar::GetDistance(std::shared_ptr<Tile> current, std::shared_ptr<Tile> destination) {
-    int dstX = std::abs(current.get()->GetPosition().x - destination.get()->GetPosition().x);
-    int dstY = std::abs(current.get()->GetPosition().y - destination.get()->GetPosition().y);
+
+float AStar::GetDistance(Tile* current, Tile* destination) {
+    int dstX = std::abs(current->GetPosition().x - destination->GetPosition().x);
+    int dstY = std::abs(current->GetPosition().y - destination->GetPosition().y);
 
     if (dstX > dstY)
     {
@@ -28,46 +21,70 @@ float AStar::GetDistance(std::shared_ptr<Tile> current, std::shared_ptr<Tile> de
        
     return 14 * dstX + 10 * (dstY - dstX);
 }
-//float AStar::GetMovementCost(Tile* current, Tile* next)
-//{
-//      // Check if diagonal move
-//    if (current->GetPosition().x != next->GetPosition().x && current->GetPosition().y != next->GetPosition().y)
-//    {
-//        return 14; // Diagonal cost
-//    }
-//    else
-//    {
-//        return 10; // Straight cost
-//    }
-//}
 
-std::vector<std::shared_ptr<Tile>> AStar::FindPath(std::shared_ptr<Tile> start, std::shared_ptr<Tile> goal)
+
+std::vector<Tile*> AStar::FindPath(Tile* start, Tile*goal)
 {
     if (finished)
     {
-        return  std::vector<std::shared_ptr<Tile>>();
+        return  std::vector<Tile*>();
     }
-   
-    if (openListMap.empty())
+    if (currentAtile == nullptr)
     {
-        //add start to here
+        currentAtile = new Atile();
+        currentAtile->gCost = 0;
+        currentAtile->tile = start;
+        currentAtile->hCost = GetDistance(currentAtile->tile, goal);
+        currentAtile->parent = nullptr;
+        openListMap[start] = currentAtile;
+        
     }
-
+    
     if (!openListMap.empty())
     {
-        std::shared_ptr<Atile> currentAtile = openListMap[0];
+         currentAtile = openListMap[0];
+         if (currentAtile->tile == goal)
+         {
+             finished = true;
+             std::vector<Tile*> path = RetracePath(currentAtile);
+             for (Tile* tile : path)
+             {
+                 
+                 tile->SetType(TileType::PATH);
+             }
+             return path;
+         }
 
-
+         for (auto a : openListMap)
+         {
+             if (a.second->fCost() < currentAtile->fCost())
+             {
+                 currentAtile = a.second;
+             }
+         }
+         openListMap.erase(currentAtile->tile);
+         closedListMap[currentAtile->tile] = currentAtile;
+         for (Tile* neigbhor: currentAtile->tile->neighbors)
+         {
+             auto it = closedListMap.find(neigbhor);
+             if (it != closedListMap.end())
+             {
+                 continue; // if neighbor is in closedList
+             }
+             int newGCost = currentAtile->gCost + GetDistance(currentAtile->tile, neigbhor);
+            
+         }
+       
 
     }
    
-    return std::vector<std::shared_ptr<Tile>>(); 
+    return std::vector<Tile*>(); 
 }
 
-std::vector<std::shared_ptr<Tile>> AStar::RetracePath(std::shared_ptr<Atile> end)
+std::vector<Tile*> AStar::RetracePath(Atile* end)
 {
-    std::vector<std::shared_ptr<Tile>> path;
-    std::shared_ptr<Atile> current = end;
+    std::vector<Tile*> path;
+    Atile* current = end;
     while (current != nullptr)
     {
         path.push_back(current->tile);

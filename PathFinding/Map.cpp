@@ -51,16 +51,16 @@ void Map::LoadFromFile(const char* filePath)
 			case 'X': type = WALL; 
 
 
-				tiles.emplace_back(std::make_shared<Tile>(type, col * tilesize, (height - 1 - row) * tilesize,Play::cBlack)); // make sure to flip Y
+				tiles.emplace_back(new Tile(type, col * tilesize, (height - 1 - row) * tilesize,Play::cBlack)); // make sure to flip Y
 				break;
 			case 'S': type = START; 
-				startTile = tiles.emplace_back(std::make_shared<Tile>(type, col * tilesize, (height - 1 - row) * tilesize, Play::cWhite)); // make sure to flip Y 
+				startTile = tiles.emplace_back(new Tile(type, col * tilesize, (height - 1 - row) * tilesize, Play::cWhite)); // make sure to flip Y 
 				break;
 			case 'G': type = GOAL; 
-				goalTile = tiles.emplace_back(std::make_shared<Tile>(type, col * tilesize, (height - 1 - row) * tilesize, Play::cGreen)); // make sure to flip Y
+				goalTile = tiles.emplace_back(new Tile(type, col * tilesize, (height - 1 - row) * tilesize, Play::cGreen)); // make sure to flip Y
 				break;
 			case '0': type = WALKABLE; 
-				tiles.emplace_back(std::make_shared<Tile>(type, col * tilesize, (height - 1 - row) * tilesize, Play::cBlue)); // make sure to flip Y
+				tiles.emplace_back(new Tile(type, col * tilesize, (height - 1 - row) * tilesize, Play::cBlue)); // make sure to flip Y
 				break;
 			}
 			
@@ -70,7 +70,7 @@ void Map::LoadFromFile(const char* filePath)
 
 void Map::Render(bool finished)
 {
-	for (std::shared_ptr<Tile> tile : tiles)
+	for (Tile* tile : tiles)
 	{
 		if (finished)
 		{
@@ -93,30 +93,29 @@ void Map::Render(bool finished)
 	}
 
 }
-void Map::RenderOneTile(std::shared_ptr<Tile> tile)
+void Map::RenderOneTile(Tile* tile)
 {
 	Play::DrawRect(
-		{ tile.get()->GetPosition().x - tilesize / 2 + offsetX, tile.get()->GetPosition().y - tilesize / 2 + offsetY },
-		{ tile.get()->GetPosition().x + tilesize / 2 + offsetX, tile.get()->GetPosition().y + tilesize / 2 + offsetY },
-		tile.get()->color, true);
+		{ tile->GetPosition().x - tilesize / 2 + offsetX, tile->GetPosition().y - tilesize / 2 + offsetY },
+		{ tile->GetPosition().x + tilesize / 2 + offsetX, tile->GetPosition().y + tilesize / 2 + offsetY },
+		tile->color, true);
 }
 
 void Map::DrawLines()
 {
-	for (std::shared_ptr<Tile> tile : tiles)
+	for (Tile* tile : tiles)
 	{
-		for (std::weak_ptr<Tile> wekneighbor : tile->neighbors)
+		for (Tile* neighbor : tile->neighbors)
 		{
-			if(auto neighbor= wekNeighbor.lock())
-			{
-				Play::DrawLine({ tile->GetPosition().x + offsetX,tile->GetPosition().y + offsetY }, { neighbor->GetPosition().x+offsetX,neighbor->GetPosition().y + offsetY}, Play::cOrange);
-			}
+			
+			Play::DrawLine({ tile->GetPosition().x + offsetX,tile->GetPosition().y + offsetY }, { neighbor->GetPosition().x+offsetX,neighbor->GetPosition().y + offsetY}, Play::cOrange);
+			
 			
 		}
 	}
 }
 //get tile based on position in vector
-std::shared_ptr<Tile> Map::GetTile(int x, int y)
+Tile* Map::GetTile(int x, int y)
 {
 	if (x < 0 || x >= width || y < 0 || y >= height)
 		return nullptr; // Out of bounds
@@ -142,13 +141,13 @@ void Map::SetupNeighbors()
 		for (int x = 0; x < width; ++x)
 		{
 			int index = y * stride + x; // X is in this direct - - - - - >, stride jumps a complete line, y says how many lines to jump
-			if (tiles[index].get()->GetType() == WALL)
+			if (tiles[index]->GetType() == WALL)
 			{
 				continue; // Walls don't have neighbors
 			}
 				
 
-			std::vector<std::weak_ptr<Tile>> neighbors;
+			std::vector<Tile*> neighbors;
 			
 
 			for (const Direction& direc: directions)
@@ -161,12 +160,12 @@ void Map::SetupNeighbors()
 				if (neighborsX >= 0 && neighborsX < width && neighborsY >= 0 && neighborsY < height)
 				{
 					int neighborIndex = neighborsY * stride + neighborsX;
-					if (tiles[neighborIndex].get()->GetType() != WALL) // if not a wall
+					if (tiles[neighborIndex]->GetType() != WALL) // if not a wall
 					{
 						if (direc.x != 0 && direc.y != 0) // Is it a diagonal move?
 						{
 							// if its a diagonal make sure the ones next to it are not walls.
-							if (tiles[(y)*stride + (x + direc.x)].get()->GetType() == WALL &&tiles[(y + direc.y) * stride + (x)].get()->GetType() == WALL)
+							if (tiles[(y)*stride + (x + direc.x)]->GetType() == WALL ||tiles[(y + direc.y) * stride + (x)]->GetType() == WALL)
 							{
 								//make it || if you dont want to be able to skip edges
 								continue; 
@@ -178,7 +177,7 @@ void Map::SetupNeighbors()
 				}
 			}
 
-			tiles[index].get()->neighbors = neighbors;
+			tiles[index]->neighbors = neighbors;
 		}
 	}
 }
