@@ -1,13 +1,14 @@
 #pragma once
 #include "Map.h"
 #include <vector>
+#include <map>
 class DepthSearch
 {
 private:
 	Map& map;
-	std::vector<DTile*> visited; 
+	//std::vector<DTile*> visited; 
 	DTile* currentTile;
-
+	std::map<Tile*,DTile*> visited;
 public:
 	DepthSearch(Map& thismap);
 	~DepthSearch();
@@ -18,7 +19,7 @@ public:
 	std::vector<Tile*> RetracePath(DTile* end);
 
 
-	bool finished = false; 
+	bool finished;
 	 
 };
 

@@ -2,13 +2,14 @@
 DepthSearch::DepthSearch(Map& thismap) : map(thismap)
 {
 	currentTile = nullptr;
+	finished = false;
 };
 
 DepthSearch::~DepthSearch()
 {
-	for (DTile* tile : visited)
+	for (auto tile : visited)
 	{
-		delete tile;
+		delete tile.second;
 	}
 	visited.clear();
 }
@@ -25,6 +26,7 @@ std::vector<Tile*> DepthSearch::FindPath(Tile* start, Tile* goal)
 		currentTile->tile = start;
 		currentTile->parent = nullptr;
 		currentTile->tile->color = Play::cYellow;
+		currentTile->visited = true;
 		return  std::vector<Tile*>();
 	}
 	if (currentTile->tile == goal)
@@ -40,46 +42,45 @@ std::vector<Tile*> DepthSearch::FindPath(Tile* start, Tile* goal)
 	}
 	for (Tile* neighbor : currentTile->tile->neighbors)
 	{
-		/*if (currentTile->parent!=nullptr)
+		//bool alreadyVisited = false;
+
+		
+		/*	for (DTile* tile : visited)
 		{
-			if (neighbor == currentTile->parent->tile)
+			if (tile->tile == neighbor)
 			{
-				continue;
+				alreadyVisited = true;
+				break;
 			}
 			
 		}*/
-		int count=0;
-		for (DTile* tile : visited)
-		{
-			if (tile->tile = neighbor)
-			{
-				count = 1;
-				break;
-			}
-			else
-			{
-				count = 0;
-			}
-		}
-		if (count == 0)
+		/*if (!alreadyVisited)
 		{
 			DTile* neighborTile = new DTile();
 			neighborTile->parent = currentTile;
 			neighborTile->tile = neighbor;
-			
+			neighborTile->visited = true;
+			visitedSet.insert(neighbor);
+			currentTile = neighborTile;
+			currentTile->tile->color = Play::cYellow;
+			return  std::vector<Tile*>();
+		}*/
+		if (visited.find(neighbor) == visited.end())
+		{
+			DTile* neighborTile = new DTile();
+			neighborTile->parent = currentTile;
+			neighborTile->tile = neighbor;
+			neighborTile->visited = true;
+			visited[neighbor] = neighborTile;
 			currentTile = neighborTile;
 			currentTile->tile->color = Play::cYellow;
 			return  std::vector<Tile*>();
 		}
-		else
-		{
-			
-			continue;
-		}
+		
 
 
 	}
-	visited.push_back(currentTile); 
+	
 	currentTile->tile->color = Play::cRed;
 	currentTile = currentTile->parent;
 	return  std::vector<Tile*>();

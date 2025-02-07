@@ -22,6 +22,10 @@ AStar astarMap3(map3);
 
 DepthSearch dptMap1(map1);
 
+DepthSearch dptMap2(map2);
+
+DepthSearch dptMap3(map3);
+
 Timer map1Time;
 
 Timer map2Time;
@@ -42,17 +46,36 @@ void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 bool MainGameUpdate( float elapsedTime )
 {
 	Play::ClearDrawingBuffer( Play::cWhite );
+	
+
+	//map1
+	std::vector<Tile*> path1;
 	if (!map1Time.timerStarted)
 	{
 		map1Time.StartTime();
 	}
-	
-	std::vector<Tile*> path1;
+	if (!dptMap1.finished)
+	{
+		map1.Render(false);
+		//path1 = dptMap1.FindPath(map1.startTile, map1.goalTile);
+		path1 = dptMap1.FindWholePath(map1.startTile, map1.goalTile);
+	}
+	if (dptMap1.finished)
+	{
+		map1.Render(true);
+		if (!map1Time.timerStopped)
+		{
+			map1Time.StopTime();
+
+		}
+		Play::DrawDebugText({ 100,250 }, std::to_string(map1Time.time).c_str(), Play::cBlack);
+
+	}
 	if (!astarMap1.finished)
 	{
 		map1.Render(false);
-		path1 = dptMap1.FindPath(map1.startTile, map1.goalTile);
-		// path1= astarMap1.FindPath(map1.startTile, map1.goalTile);
+		
+		 //path1= astarMap1.FindPath(map1.startTile, map1.goalTile);
 		//path1 = astarMap1.FindWholePath(map1.startTile, map1.goalTile);
 		  
 	}
@@ -71,10 +94,28 @@ bool MainGameUpdate( float elapsedTime )
 	}
 	//map1.DrawLines();
 	
+	//map2 
 	std::vector<Tile*> path2;
 	if (!map2Time.timerStarted)
 	{
 		map2Time.StartTime();
+	}
+	if (!dptMap2.finished)
+	{
+		map2.Render(false);
+		//path2 = dptMap2.FindPath(map2.startTile, map2.goalTile);
+		path2 = dptMap2.FindWholePath(map2.startTile, map2.goalTile);
+	}
+	if (dptMap2.finished)
+	{
+		map2.Render(true);
+		if (!map2Time.timerStopped)
+		{
+			map2Time.StopTime();
+
+		}
+		Play::DrawDebugText({ 280,250 }, std::to_string(map2Time.time).c_str(), Play::cBlack);
+
 	}
 	if (!astarMap2.finished)
 	{
@@ -94,13 +135,36 @@ bool MainGameUpdate( float elapsedTime )
 		
 		Play::DrawDebugText({ 280,250 }, std::to_string(map2Time.time).c_str(), Play::cBlack);
 	}
-	map2.DrawLines();
+	//map2.DrawLines();
+
+	//map 3
 	std::vector<Tile*> path3;
 	if (!map3Time.timerStarted)
 	{
 		map3Time.StartTime();
 	}
-	 if (!astarMap3.finished)
+	if (!map3Time.timerStarted)
+	{
+		map3Time.StartTime();
+	}
+	if (!dptMap3.finished)
+	{
+		map3.Render(false);
+		//path3 = dptMap3.FindPath(map3.startTile, map3.goalTile);
+		path3 = dptMap3.FindWholePath(map3.startTile, map3.goalTile);
+	}
+	if (dptMap3.finished)
+	{
+		map3.Render(true);
+		if (!map3Time.timerStopped)
+		{
+			map3Time.StopTime();
+
+		}
+		Play::DrawDebugText({ 520,320 }, std::to_string(map3Time.time).c_str(), Play::cBlack);
+
+	}
+	if (!astarMap3.finished)
 	{
 		 map3.Render(false);
 		 //path3 = astarMap3.FindPath(map3.startTile, map3.goalTile);
@@ -118,7 +182,7 @@ bool MainGameUpdate( float elapsedTime )
 
 		Play::DrawDebugText({ 520,320 },std::to_string(map3Time.time).c_str(), Play::cBlack);
 	}
-	map3.DrawLines();
+	//map3.DrawLines();
 	Play::PresentDrawingBuffer();
 	return Play::KeyDown( KEY_ESCAPE );
 }

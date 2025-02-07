@@ -45,4 +45,5 @@ struct DTile
 {
 	Tile* tile;
 	DTile* parent;
+	bool visited;
 };
