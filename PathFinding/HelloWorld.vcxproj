@@ -197,6 +197,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="RWalk.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
@@ -206,6 +207,7 @@
     <ClInclude Include="DepthSearch.h" />
     <ClInclude Include="Directions.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="RWalk.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
