@@ -49,7 +49,7 @@ bool MainGameUpdate( float elapsedTime )
 {
 	Play::ClearDrawingBuffer( Play::cWhite );
 	
-
+	Play::DrawDebugText({ 300,350 }, "Currently displaying Depth-first", Play::cBlack);
 	//map1
 	std::vector<Tile*> path1;
 	if (!map1Time.timerStarted)
@@ -254,6 +254,7 @@ bool MainGameUpdate( float elapsedTime )
 	}
 	//map3.DrawLines();
 	Play::PresentDrawingBuffer();
+	
 	return Play::KeyDown( KEY_ESCAPE );
 }
 
